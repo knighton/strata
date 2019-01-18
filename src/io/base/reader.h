@@ -89,7 +89,7 @@ class StrataReader {
     // Configure "limit" to return after some number of entries or bytes have
     // been read, otherwise it reads until the end (nullptr means no limit).
     //
-    // Appends parsed items to "items".
+    // Appends read items to "items" (nullptr means don't save).
     //
     // Tracks statistics on the results of each entry read in "stats" (nullptr
     // means don't track).

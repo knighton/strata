@@ -121,7 +121,9 @@ ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
         ReadOneResult rr = ReadOne(&item);
         switch (rr) {
             case ReadOneResult::OK:
-                items->emplace_back(item);
+                if (items) {
+                    items->emplace_back(item);
+                }
                 if (stats) {
                     ++stats->num_ok;
                 }

@@ -14,10 +14,10 @@ StrataReadOneResult ReadOneFromStrataString(const string& data, size_t* index,
 }
 
 StrataReadManyResult ReadFromStrataString(
-        const string& data, size_t* index, StrataReadLimit* limit,
-        vector<string>* items, StrataReadOneResultStats* stats) {
+        const string& data, size_t* index, vector<string>* items,
+        StrataReadLimit* limit, StrataReadOneResultStats* stats) {
     StrataStringReader reader(&data, index);
-    return reader.Read(limit, items, stats);
+    return reader.Read(items, limit, stats);
 }
 
 bool WriteOneToStrataString(const StrataWriteFlags& flags, const string& item,

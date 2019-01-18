@@ -38,8 +38,33 @@ enum class StrataReadManyResult {
 };
 
 // Tells when to stop reading items this call.
+//
+// Examples
+// --------
+//
+// Can't stop won't stop:
+//
+//     StrataReadLimit limit;
+//
+// Stop after a maximum of 64 items.
+//
+//     StrataReadLimit limit(64);
+//
+// Stop after reading items totaling 16384 bytes (total -- valid or otherwise).
+//
+//     StrataReadLimit limit(StrataReadLimit::NO_ITEM_LIMIT, 1 << 14);
+//
+// Stop after either hitting 10 items or 1024 bytes, whichever is first:
+//
+//     StrataReadLimit limit(10, 1024);
 class StrataReadLimit {
   public:
+    // No limit on the number of items read.
+    static const size_t NO_ITEM_LIMIT{~0UL};
+
+    // No limit on the number of bytes read.
+    static const size_t NO_BYTE_LIMIT{~0UL};
+
     // Accessors.
     size_t max_items() const { return max_items_; }
     size_t max_bytes() const { return max_bytes_; }
@@ -47,14 +72,11 @@ class StrataReadLimit {
     size_t bytes() const { return bytes_; }
 
     // Initialize with the given (default = no) limits.  Calls Init().
-    StrataReadLimit(size_t max_items, size_t max_bytes);
-    StrataReadLimit(size_t max_items);
-    StrataReadLimit();
+    StrataReadLimit(size_t max_items=NO_ITEM_LIMIT,
+                    size_t max_bytes=NO_BYTE_LIMIT);
 
     // Initialize with the given (default = no) limits, resetting the counters.
-    void Init(size_t max_items, size_t max_bytes);
-    void Init(size_t max_items);
-    void Init();
+    void Init(size_t max_items=NO_ITEM_LIMIT, size_t max_bytes=NO_BYTE_LIMIT);
 
     // Note that we are at the beginning of a read many call.
     //
@@ -68,8 +90,8 @@ class StrataReadLimit {
 
   private:
     // Limits.
-    size_t max_items_{~0UL};
-    size_t max_bytes_{~0UL};
+    size_t max_items_{NO_ITEM_LIMIT};
+    size_t max_bytes_{NO_BYTE_LIMIT};
 
     // How much we have accumulated this call.
     size_t items_{0};
@@ -91,17 +113,69 @@ class StrataReader {
 
     // Read some entries.
     //
+    // Appends read items to "items" (nullptr means don't save).
+    //
     // Configure "limit" to return after some number of entries or bytes have
     // been read, otherwise it reads until the end (nullptr means no limit).
-    //
-    // Appends read items to "items" (nullptr means don't save).
     //
     // Tracks statistics on the results of each entry read in "stats" (nullptr
     // means don't track).
     //
     // Returns a status enum, which is zero if there is more data left.
-    StrataReadManyResult Read(StrataReadLimit* limit, vector<string>* items,
-                              StrataReadOneResultStats* stats);
+    //
+    // Examples
+    // --------
+    //
+    // Read to the end:
+    //
+    //     Strata...Reader reader(...);
+    //     vector<string> items;
+    //     if (reader.Read(&items)) {
+    //         TellUserFileIsTruncated();
+    //     }
+    //     HandleItems(items);
+    //
+    // Read and handle 64 items at a time:
+    //
+    //     Strata...Reader reader(...);
+    //     vector<string> items;
+    //     StrataReadLimit limit(64);
+    //     while (!reader.Read(&items, &limit)) {
+    //         HandleItems(items);
+    //         items.clear();
+    //     }
+    //
+    // Items vary a lot in size and we are interested in corruption:
+    //
+    //     Strata...Reader reader(...);
+    //     vector<string> items;
+    //     StrataReadLimit limit(StrataReadLimit::NO_ITEM_LIMIT, 1 << 15);
+    //     StrataReadOneResultStats stats;
+    //     while (!reader.Read(&items, &limit, &stats)) {
+    //         HandleItems(items, stats);
+    //         items.clear();
+    //     }
+    //
+    // Just validate the thing:
+    //
+    //     Strata...Reader reader(...);
+    //     StrataReadOneResultStats stats;
+    //     auto code = reader.Read(nullptr, nullptr, &stats);
+    //     HandleReadResults(code, stats);
+    //
+    // Skip 100 items:
+    //
+    //     Strata...Reader reader(...);
+    //     ...
+    //     StrataReadLimit limit(100);
+    //     if (reader.Read(nullptr, &limit)) {
+    //         HandleError();
+    //         return;
+    //     }
+    //     ...
+    StrataReadManyResult Read(vector<string>* items=nullptr,
+                              StrataReadLimit* limit=nullptr,
+                              StrataReadOneResultStats* stats=nullptr);
 
   protected:
     // Read some raw bytes, advancing the state.

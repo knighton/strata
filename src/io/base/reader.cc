@@ -21,27 +21,11 @@ StrataReadLimit::StrataReadLimit(size_t max_items, size_t max_bytes) {
     Init(max_items, max_bytes);
 }
 
-StrataReadLimit::StrataReadLimit(size_t max_items) {
-    Init(max_items);
-}
-
-StrataReadLimit::StrataReadLimit() {
-    Init();
-}
-
 void StrataReadLimit::Init(size_t max_items, size_t max_bytes) {
     max_items_ = max_items;
     max_bytes_ = max_bytes;
     items_ = 0;
     bytes_ = 0;
-}
-
-void StrataReadLimit::Init(size_t max_items) {
-    return Init(max_items, ~0UL);
-}
-
-void StrataReadLimit::Init() {
-    return Init(~0UL);
 }
 
 void StrataReadLimit::Start() {
@@ -124,7 +108,7 @@ StrataReadOneResult StrataReader::ReadOne(string* item) {
 }
 
 StrataReadManyResult StrataReader::Read(
-        StrataReadLimit* limit, vector<string>* items,
+        vector<string>* items, StrataReadLimit* limit,
         StrataReadOneResultStats* stats) {
     if (limit) {
         limit->Start();

@@ -17,8 +17,8 @@ StrataReadOneResult ReadOneFromStrataBuffer(
     const char** data, const char* data_end, string* item);
 
 StrataReadManyResult ReadFromStrataBuffer(
-    const char** data, const char* data_end, StrataReadLimit* limit,
-    vector<string>* items, StrataReadOneResultStats* stats);
+    const char** data, const char* data_end, vector<string>* items=nullptr,
+    StrataReadLimit* limit=nullptr, StrataReadOneResultStats* stats=nullptr);
 
 bool WriteOneToStrataBuffer(const StrataWriteFlags& flags, const string& item,
                             char** data, const char* data_end);

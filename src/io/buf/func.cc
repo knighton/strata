@@ -14,10 +14,10 @@ StrataReadOneResult ReadOneFromStrataBuffer(
 }
 
 StrataReadManyResult ReadFromStrataBuffer(
-        const char** data, const char* data_end, StrataReadLimit* limit,
-        vector<string>* items, StrataReadOneResultStats* stats) {
+        const char** data, const char* data_end, vector<string>* items,
+        StrataReadLimit* limit, StrataReadOneResultStats* stats) {
     StrataBufferReader reader(data, data_end);
-    return reader.Read(limit, items, stats);
+    return reader.Read(items, limit, stats);
 }
 
 bool WriteOneToStrataBuffer(

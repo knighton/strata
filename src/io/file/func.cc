@@ -13,10 +13,10 @@ StrataReadOneResult ReadOneFromStrataFile(FILE* file, string* item) {
 }
 
 StrataReadManyResult ReadFromStrataFile(
-        FILE* file, StrataReadLimit* limit, vector<string>* items,
+        FILE* file, vector<string>* items, StrataReadLimit* limit,
         StrataReadOneResultStats* stats) {
     StrataFileReader reader(file);
-    return reader.Read(limit, items, stats);
+    return reader.Read(items, limit, stats);
 }
 
 bool WriteOneToStrataFile(const StrataWriteFlags& flags, const string& item,

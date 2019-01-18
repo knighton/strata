@@ -84,13 +84,14 @@ ReadOneResult StrataReader::ReadOne(string* item) {
     }
 
     // Now get the item.
-    if (!ReadRaw(item_size, item)) {
+    string temp;
+    if (!ReadRaw(item_size, &temp)) {
         return ReadOneResult::INCOMPLETE;
     }
 
     // If checksum, apply it.
     if (has_crc32) {
-        uint32_t redo_crc32 = CRC32(item->data(), item->size());
+        uint32_t redo_crc32 = CRC32(temp.data(), temp.size());
         if (crc32 != redo_crc32) {
             return ReadOneResult::CHECKSUM;
         }
@@ -98,13 +99,15 @@ ReadOneResult StrataReader::ReadOne(string* item) {
 
     // If compressed, uncompress it.
     if (used_snappy) {
-        string out;
-        if (!snappy::Uncompress(item->data(), item->size(), &out)) {
+        string uncompressed_temp;
+        if (!snappy::Uncompress(temp.data(), temp.size(), &uncompressed_temp)) {
             return ReadOneResult::SNAPPY;
         }
-        item->swap(out);
+        temp.swap(uncompressed_temp);
     }
 
+    // Finally, set the item.
+    item->swap(temp);
     return ReadOneResult::OK;
 }
 

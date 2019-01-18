@@ -79,7 +79,7 @@ class StrataReader {
 
     // Read one entry, advancing the state.
     //
-    // Sets "item" on success.
+    // Sets "item" iff success.
     //
     // Returns a status enum, which is zero on success.
     ReadOneResult ReadOne(string* item);

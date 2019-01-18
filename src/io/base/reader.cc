@@ -18,18 +18,30 @@ void ReadOneResultStats::Clear() {
 }
 
 ReadLimit::ReadLimit(size_t max_items, size_t max_bytes) {
+    Init(max_items, max_bytes);
+}
+
+ReadLimit::ReadLimit(size_t max_items) {
+    Init(max_items);
+}
+
+ReadLimit::ReadLimit() {
+    Init();
+}
+
+void ReadLimit::Init(size_t max_items, size_t max_bytes) {
     max_items_ = max_items;
     max_bytes_ = max_bytes;
     items_ = 0;
     bytes_ = 0;
 }
 
-ReadLimit::ReadLimit(size_t max_items) {
-    ReadLimit(max_items, ~0UL);
+void ReadLimit::Init(size_t max_items) {
+    return Init(max_items, ~0UL);
 }
 
-ReadLimit::ReadLimit() {
-    ReadLimit(~0UL, ~0UL);
+void ReadLimit::Init() {
+    return Init(~0UL);
 }
 
 void ReadLimit::Start() {

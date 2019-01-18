@@ -46,10 +46,15 @@ class ReadLimit {
     size_t items() const { return items_; }
     size_t bytes() const { return bytes_; }
 
-    // Initialize with limits.
+    // Initialize with the given (default = no) limits.  Calls Init().
     ReadLimit(size_t max_items, size_t max_bytes);
     ReadLimit(size_t max_items);
     ReadLimit();
+
+    // Initialize with the given (default = no) limits, resetting the counters.
+    void Init(size_t max_items, size_t max_bytes);
+    void Init(size_t max_items);
+    void Init();
 
     // Note that we are at the beginning of a read many call.
     //

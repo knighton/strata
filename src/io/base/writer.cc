@@ -14,8 +14,8 @@ namespace base {
 StrataWriter::~StrataWriter() {
 }
 
-bool StrataWriter::WriteOne(const WriteFlags& flags,
-                      const string& uncompressed_item) {
+bool StrataWriter::WriteOne(const StrataWriteFlags& flags,
+                            const string& uncompressed_item) {
     // Perform fast compression if desired.
     string compressed_item;
     const string* item;
@@ -74,7 +74,7 @@ bool StrataWriter::WriteOne(const WriteFlags& flags,
     return WriteRaw(*item);
 }
 
-size_t StrataWriter::Write(const WriteFlags& flags,
+size_t StrataWriter::Write(const StrataWriteFlags& flags,
                            const vector<string>& items) {
     size_t i;
     for (i = 0; i < items.size(); ++i) {

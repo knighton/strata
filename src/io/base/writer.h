@@ -11,7 +11,7 @@ namespace io {
 namespace base {
 
 // Flags bitfield used to control writing one entry.
-struct WriteFlags {
+struct StrataWriteFlags {
     bool snappy : 1;  // Use Snappy compression.
     bool crc32 : 1;   // Add CRC32 checksum.
 };
@@ -25,12 +25,12 @@ class StrataWriter {
     // Write one entry to an object, advancing the state.
     //
     // Returns whether entry was successfully written.
-    bool WriteOne(const WriteFlags& flags, const string& item);
+    bool WriteOne(const StrataWriteFlags& flags, const string& item);
 
     // Write a sequence of entries to an object, advancing the state.
     //
     // Returns the number of entries successfully written.
-    size_t Write(const WriteFlags& flags, const vector<string>& items);
+    size_t Write(const StrataWriteFlags& flags, const vector<string>& items);
 
   protected:
     // Write some raw bytes, advancing the state.

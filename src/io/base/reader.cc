@@ -11,45 +11,45 @@ namespace strata {
 namespace io {
 namespace base {
 
-void ReadOneResultStats::Clear() {
+void StrataReadOneResultStats::Clear() {
     num_ok = 0;
     num_error_checksum = 0;
     num_error_snappy = 0;
 }
 
-ReadLimit::ReadLimit(size_t max_items, size_t max_bytes) {
+StrataReadLimit::StrataReadLimit(size_t max_items, size_t max_bytes) {
     Init(max_items, max_bytes);
 }
 
-ReadLimit::ReadLimit(size_t max_items) {
+StrataReadLimit::StrataReadLimit(size_t max_items) {
     Init(max_items);
 }
 
-ReadLimit::ReadLimit() {
+StrataReadLimit::StrataReadLimit() {
     Init();
 }
 
-void ReadLimit::Init(size_t max_items, size_t max_bytes) {
+void StrataReadLimit::Init(size_t max_items, size_t max_bytes) {
     max_items_ = max_items;
     max_bytes_ = max_bytes;
     items_ = 0;
     bytes_ = 0;
 }
 
-void ReadLimit::Init(size_t max_items) {
+void StrataReadLimit::Init(size_t max_items) {
     return Init(max_items, ~0UL);
 }
 
-void ReadLimit::Init() {
+void StrataReadLimit::Init() {
     return Init(~0UL);
 }
 
-void ReadLimit::Start() {
+void StrataReadLimit::Start() {
     items_ = 0;
     bytes_ = 0;
 }
 
-bool ReadLimit::ShouldContinue(size_t bytes) {
+bool StrataReadLimit::ShouldContinue(size_t bytes) {
     ++items_;
     ++bytes_ += bytes;
     if (max_items_ <= items_) {
@@ -64,11 +64,11 @@ bool ReadLimit::ShouldContinue(size_t bytes) {
 StrataReader::~StrataReader() {
 }
 
-ReadOneResult StrataReader::ReadOne(string* item) {
+StrataReadOneResult StrataReader::ReadOne(string* item) {
     // Parse the flags and item size.
     uint16_t first;
     if (!ReadRaw(&first)) {
-        return ReadOneResult::INCOMPLETE;
+        return StrataReadOneResult::INCOMPLETE;
     }
     bool has_long_length = first & (1 << 15);
     bool used_snappy = first & (1 << 14);
@@ -78,7 +78,7 @@ ReadOneResult StrataReader::ReadOne(string* item) {
     if (has_long_length) {
         uint16_t second;
         if (!ReadRaw(&second)) {
-            return ReadOneResult::INCOMPLETE;
+            return StrataReadOneResult::INCOMPLETE;
         }
         item_size = (static_cast<uint32_t>(first) << 16) | second;
     } else {
@@ -89,7 +89,7 @@ ReadOneResult StrataReader::ReadOne(string* item) {
     uint32_t crc32;
     if (has_crc32) {
         if (!ReadRaw(&crc32)) {
-            return ReadOneResult::INCOMPLETE;
+            return StrataReadOneResult::INCOMPLETE;
         }
     } else {
         crc32 = 0;  // Linter not smart enough.
@@ -98,14 +98,14 @@ ReadOneResult StrataReader::ReadOne(string* item) {
     // Now get the item.
     string temp;
     if (!ReadRaw(item_size, &temp)) {
-        return ReadOneResult::INCOMPLETE;
+        return StrataReadOneResult::INCOMPLETE;
     }
 
     // If checksum, apply it.
     if (has_crc32) {
         uint32_t redo_crc32 = CRC32(temp.data(), temp.size());
         if (crc32 != redo_crc32) {
-            return ReadOneResult::CHECKSUM;
+            return StrataReadOneResult::CHECKSUM;
         }
     }
 
@@ -113,18 +113,19 @@ ReadOneResult StrataReader::ReadOne(string* item) {
     if (used_snappy) {
         string uncompressed_temp;
         if (!snappy::Uncompress(temp.data(), temp.size(), &uncompressed_temp)) {
-            return ReadOneResult::SNAPPY;
+            return StrataReadOneResult::SNAPPY;
         }
         temp.swap(uncompressed_temp);
     }
 
     // Finally, set the item.
     item->swap(temp);
-    return ReadOneResult::OK;
+    return StrataReadOneResult::OK;
 }
 
-ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
-                                  ReadOneResultStats* stats) {
+StrataReadManyResult StrataReader::Read(
+        StrataReadLimit* limit, vector<string>* items,
+        StrataReadOneResultStats* stats) {
     if (limit) {
         limit->Start();
     }
@@ -133,9 +134,9 @@ ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
     }
     string item;
     while (true) {
-        ReadOneResult rr = ReadOne(&item);
+        StrataReadOneResult rr = ReadOne(&item);
         switch (rr) {
-            case ReadOneResult::OK:
+            case StrataReadOneResult::OK:
                 if (items) {
                     items->emplace_back(item);
                 }
@@ -143,16 +144,16 @@ ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
                     ++stats->num_ok;
                 }
                 break;
-            case ReadOneResult::END:
-                return ReadManyResult::END;
-            case ReadOneResult::INCOMPLETE:
-                return ReadManyResult::INCOMPLETE;
-            case ReadOneResult::CHECKSUM:
+            case StrataReadOneResult::END:
+                return StrataReadManyResult::END;
+            case StrataReadOneResult::INCOMPLETE:
+                return StrataReadManyResult::INCOMPLETE;
+            case StrataReadOneResult::CHECKSUM:
                 if (stats) {
                     ++stats->num_error_checksum;
                 }
                 break;
-            case ReadOneResult::SNAPPY:
+            case StrataReadOneResult::SNAPPY:
                 if (stats) {
                     ++stats->num_error_snappy;
                 }
@@ -166,7 +167,7 @@ ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
             }
         }
     }
-    return ReadManyResult::OK;
+    return StrataReadManyResult::OK;
 }
 
 bool StrataReader::ReadRaw(size_t size, string* bytes) {

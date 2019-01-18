@@ -11,7 +11,7 @@ namespace io {
 namespace base {
 
 // Result of parsing one entry.
-enum class ReadOneResult {
+enum class StrataReadOneResult {
     OK = 0,          // Read the entry successfully.
     END = 1,         // Reached the end.  No data left to parse.
     INCOMPLETE = 2,  // Reached the end.  Incomplete/truncated data present.
@@ -20,8 +20,8 @@ enum class ReadOneResult {
 };
 
 // Result of parsing all entries.
-struct ReadOneResultStats {
-    // The counts (see ReadOneResult).
+struct StrataReadOneResultStats {
+    // The counts (see StrataReadOneResult).
     uint32_t num_ok{0};              // Number of successfully parsed entries.
     uint32_t num_error_checksum{0};  // Number of entries with checksum failure.
     uint32_t num_error_snappy{0};    // Number of entries with invalid proto.
@@ -31,14 +31,14 @@ struct ReadOneResultStats {
 };
 
 // Result of parsing some entries.
-enum class ReadManyResult {
+enum class StrataReadManyResult {
     OK = 0,         // Read the desired number of entries (keep going).
     END = 1,        // Reached the end.  No data left to parse.
     INCOMPLETE = 2  // Reached the end.  Incomplete/truncated data present.
 };
 
 // Tells when to stop reading items this call.
-class ReadLimit {
+class StrataReadLimit {
   public:
     // Accessors.
     size_t max_items() const { return max_items_; }
@@ -47,9 +47,9 @@ class ReadLimit {
     size_t bytes() const { return bytes_; }
 
     // Initialize with the given (default = no) limits.  Calls Init().
-    ReadLimit(size_t max_items, size_t max_bytes);
-    ReadLimit(size_t max_items);
-    ReadLimit();
+    StrataReadLimit(size_t max_items, size_t max_bytes);
+    StrataReadLimit(size_t max_items);
+    StrataReadLimit();
 
     // Initialize with the given (default = no) limits, resetting the counters.
     void Init(size_t max_items, size_t max_bytes);
@@ -87,7 +87,7 @@ class StrataReader {
     // Sets "item" iff success.
     //
     // Returns a status enum, which is zero on success.
-    ReadOneResult ReadOne(string* item);
+    StrataReadOneResult ReadOne(string* item);
 
     // Read some entries.
     //
@@ -100,8 +100,8 @@ class StrataReader {
     // means don't track).
     //
     // Returns a status enum, which is zero if there is more data left.
-    ReadManyResult Read(ReadLimit* limit, vector<string>* items,
-                        ReadOneResultStats* stats);
+    StrataReadManyResult Read(StrataReadLimit* limit, vector<string>* items,
+                              StrataReadOneResultStats* stats);
 
   protected:
     // Read some raw bytes, advancing the state.

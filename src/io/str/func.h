@@ -3,28 +3,28 @@
 #include "io/base/reader.h"
 #include "io/base/writer.h"
 
-using strata::io::base::ReadLimit;
-using strata::io::base::ReadManyResult;
-using strata::io::base::ReadOneResult;
-using strata::io::base::ReadOneResultStats;
-using strata::io::base::WriteFlags;
+using strata::io::base::StrataReadLimit;
+using strata::io::base::StrataReadManyResult;
+using strata::io::base::StrataReadOneResult;
+using strata::io::base::StrataReadOneResultStats;
+using strata::io::base::StrataWriteFlags;
 
 namespace strata {
 namespace io {
 namespace str {
 
-ReadOneResult ReadOneFromStrataString(const string& data, size_t* index,
-                                      string* item);
+StrataReadOneResult ReadOneFromStrataString(const string& data, size_t* index,
+                                            string* item);
 
-ReadManyResult ReadFromStrataString(const string& data, size_t* index,
-                                    ReadLimit* limit, vector<string>* items,
-                                    ReadOneResultStats* stats);
+StrataReadManyResult ReadFromStrataString(
+    const string& data, size_t* index, StrataReadLimit* limit,
+    vector<string>* items, StrataReadOneResultStats* stats);
 
-bool WriteOneToStrataString(const WriteFlags& flags, const string& item,
+bool WriteOneToStrataString(const StrataWriteFlags& flags, const string& item,
                             string* data);
 
-size_t WriteToStrataString(const WriteFlags& flags, const vector<string>& items,
-                           string* data);
+size_t WriteToStrataString(const StrataWriteFlags& flags,
+                           const vector<string>& items, string* data);
 
 }  // namespace str
 }  // namespace io

@@ -7,26 +7,26 @@ namespace strata {
 namespace io {
 namespace file {
 
-ReadOneResult ReadOneFromStrataFile(FILE* file, string* item) {
+StrataReadOneResult ReadOneFromStrataFile(FILE* file, string* item) {
     StrataFileReader reader(file);
     return reader.ReadOne(item);
 }
 
-ReadManyResult ReadFromStrataFile(FILE* file, ReadLimit* limit,
-                                  vector<string>* items,
-                                  ReadOneResultStats* stats) {
+StrataReadManyResult ReadFromStrataFile(
+        FILE* file, StrataReadLimit* limit, vector<string>* items,
+        StrataReadOneResultStats* stats) {
     StrataFileReader reader(file);
     return reader.Read(limit, items, stats);
 }
 
-bool WriteOneToStrataFile(const WriteFlags& flags, const string& item,
+bool WriteOneToStrataFile(const StrataWriteFlags& flags, const string& item,
                           FILE* file) {
     StrataFileWriter writer(file);
     return writer.WriteOne(flags, item);
 }
 
-size_t WriteToStrataFile(const WriteFlags& flags, const vector<string>& items,
-                         FILE* file) {
+size_t WriteToStrataFile(const StrataWriteFlags& flags,
+                         const vector<string>& items, FILE* file) {
     StrataFileWriter writer(file);
     return writer.Write(flags, items);
 }

@@ -8,6 +8,7 @@
 using strata::util::CRC32;
 
 namespace strata {
+namespace io {
 namespace base {
 
 void ReadOneResultStats::Clear() {
@@ -48,10 +49,10 @@ bool ReadLimit::ShouldContinue(size_t bytes) {
     return true;
 }
 
-Reader::~Reader() {
+StrataReader::~StrataReader() {
 }
 
-ReadOneResult Reader::ReadOne(string* item) {
+ReadOneResult StrataReader::ReadOne(string* item) {
     // Parse the flags and item size.
     uint16_t first;
     if (!ReadRaw(&first)) {
@@ -107,8 +108,8 @@ ReadOneResult Reader::ReadOne(string* item) {
     return ReadOneResult::OK;
 }
 
-ReadManyResult Reader::Read(ReadLimit* limit, vector<string>* items,
-                            ReadOneResultStats* stats) {
+ReadManyResult StrataReader::Read(ReadLimit* limit, vector<string>* items,
+                                  ReadOneResultStats* stats) {
     if (limit) {
         limit->Start();
     }
@@ -151,18 +152,19 @@ ReadManyResult Reader::Read(ReadLimit* limit, vector<string>* items,
     return ReadManyResult::OK;
 }
 
-bool Reader::ReadRaw(size_t size, string* bytes) {
+bool StrataReader::ReadRaw(size_t size, string* bytes) {
     bytes->resize(size);
     return ReadRaw(size, &(*bytes)[0]);
 }
 
-bool Reader::ReadRaw(uint16_t* bytes) {
+bool StrataReader::ReadRaw(uint16_t* bytes) {
     return ReadRaw(sizeof(*bytes), reinterpret_cast<char*>(bytes));
 }
 
-bool Reader::ReadRaw(uint32_t* bytes) {
+bool StrataReader::ReadRaw(uint32_t* bytes) {
     return ReadRaw(sizeof(*bytes), reinterpret_cast<char*>(bytes));
 }
 
 }  // namespace base
+}  // namespace io
 }  // namespace strata

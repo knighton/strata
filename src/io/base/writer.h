@@ -7,6 +7,7 @@ using std::string;
 using std::vector;
 
 namespace strata {
+namespace io {
 namespace base {
 
 // Flags bitfield used to control writing one entry.
@@ -16,20 +17,20 @@ struct WriteFlags {
 };
 
 // writer abstract base class.
-class Writer {
+class StrataWriter {
   public:
     // Initialize with the state we are reading from (string, file, etc).
-    virtual ~Writer();
+    virtual ~StrataWriter();
 
     // Write one entry to an object, advancing the state.
     //
     // Returns whether entry was successfully written.
-    bool WriteOne(WriteFlags flags, const string& item);
+    bool WriteOne(const WriteFlags& flags, const string& item);
 
     // Write a sequence of entries to an object, advancing the state.
     //
     // Returns the number of entries successfully written.
-    size_t Write(WriteFlags flags, const vector<string>& items);
+    size_t Write(const WriteFlags& flags, const vector<string>& items);
 
   protected:
     // Write some raw bytes, advancing the state.
@@ -42,4 +43,5 @@ class Writer {
 };
 
 }  // namespace base
+}  // namespace io
 }  // namespace strata

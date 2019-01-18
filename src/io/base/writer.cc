@@ -8,12 +8,14 @@
 using strata::util::CRC32;
 
 namespace strata {
+namespace io {
 namespace base {
 
-Writer::~Writer() {
+StrataWriter::~StrataWriter() {
 }
 
-bool Writer::WriteOne(WriteFlags flags, const string& uncompressed_item) {
+bool StrataWriter::WriteOne(const WriteFlags& flags,
+                      const string& uncompressed_item) {
     // Perform fast compression if desired.
     string compressed_item;
     const string* item;
@@ -72,7 +74,8 @@ bool Writer::WriteOne(WriteFlags flags, const string& uncompressed_item) {
     return WriteRaw(*item);
 }
 
-size_t Writer::Write(WriteFlags flags, const vector<string>& items) {
+size_t StrataWriter::Write(const WriteFlags& flags,
+                           const vector<string>& items) {
     size_t i;
     for (i = 0; i < items.size(); ++i) {
         if (!WriteOne(flags, items[i])) {
@@ -82,17 +85,18 @@ size_t Writer::Write(WriteFlags flags, const vector<string>& items) {
     return i;
 }
 
-bool Writer::WriteRaw(const string& bytes) {
+bool StrataWriter::WriteRaw(const string& bytes) {
     return WriteRaw(bytes.data(), bytes.size());
 }
 
-bool Writer::WriteRaw(uint16_t bytes) {
+bool StrataWriter::WriteRaw(uint16_t bytes) {
     return WriteRaw(reinterpret_cast<const char*>(&bytes), sizeof(bytes));
 }
 
-bool Writer::WriteRaw(uint32_t bytes) {
+bool StrataWriter::WriteRaw(uint32_t bytes) {
     return WriteRaw(reinterpret_cast<const char*>(&bytes), sizeof(bytes));
 }
 
 }  // namespace base
+}  // namespace io
 }  // namespace strata

@@ -7,6 +7,7 @@ using std::string;
 using std::vector;
 
 namespace strata {
+namespace io {
 namespace base {
 
 // Result of parsing one entry.
@@ -71,10 +72,10 @@ class ReadLimit {
 };
 
 // Strata format reader abstract base class.
-class Reader {
+class StrataReader {
   public:
     // Initialize with the state we are reading from (string, file, etc).
-    virtual ~Reader();
+    virtual ~StrataReader();
 
     // Read one entry, advancing the state.
     //
@@ -111,4 +112,5 @@ class Reader {
 };
 
 }  // namespace base
+}  // namespace io
 }  // namespace strata

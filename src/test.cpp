@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "io/str/func.h"
+#include "io/str/reader.h"
 #include "io/str/writer.h"
 #include "util/crc32.h"
 
@@ -80,9 +81,27 @@ void Test(const StrataWriteFlags& flags, const vector<string>& items) {
 
     {
         size_t index = 0;
+        vector<string> read_items;
+        assert(ReadFromStrataString(data, &index, &read_items) == items.size());
+        assert(items == read_items);
+    }
+
+    {
+        size_t index = 0;
         string item;
         vector<string> read_items;
-        assert(ReadFromStrataString(data, &index, &read_items));
+        StrataStringReader reader(&data, &index);
+        while (reader.ReadOne(&item)) {
+            read_items.emplace_back(item);
+        }
+        assert(items == read_items);
+    }
+
+    {
+        size_t index = 0;
+        vector<string> read_items;
+        StrataStringReader reader(&data, &index);
+        assert(reader.Read(&read_items) == items.size());
         assert(items == read_items);
     }
 }

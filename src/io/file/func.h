@@ -15,9 +15,9 @@ namespace file {
 bool ReadOneFromStrataFile(FILE* file, string* item,
                            StrataReadOneInfo* info=nullptr);
 
-bool ReadFromStrataFile(FILE* file, vector<string>* items=nullptr,
-                        StrataReadManyInfo* info=nullptr,
-                        StrataReadLimit* limit=nullptr);
+size_t ReadFromStrataFile(FILE* file, vector<string>* items=nullptr,
+                          StrataReadManyInfo* info=nullptr,
+                          StrataReadLimit* limit=nullptr);
 
 bool WriteOneToStrataFile(const StrataWriteFlags& flags, const string& item,
                           FILE* file);

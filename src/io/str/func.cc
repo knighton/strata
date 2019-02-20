@@ -13,9 +13,9 @@ bool ReadOneFromStrataString(const string& data, size_t* index, string* item,
     return reader.ReadOne(item, info);
 }
 
-bool ReadFromStrataString(const string& data, size_t* index,
-                          vector<string>* items, StrataReadManyInfo* info,
-                          StrataReadLimit* limit) {
+size_t ReadFromStrataString(const string& data, size_t* index,
+                            vector<string>* items, StrataReadManyInfo* info,
+                            StrataReadLimit* limit) {
     StrataStringReader reader(&data, index);
     return reader.Read(items, info, limit);
 }

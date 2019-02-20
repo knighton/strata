@@ -15,10 +15,10 @@ namespace buf {
 bool ReadOneFromStrataBuffer(const char** data, const char* data_end,
                              string* item, StrataReadOneInfo* info=nullptr);
 
-bool ReadFromStrataBuffer(const char** data, const char* data_end,
-                          vector<string>* items=nullptr,
-                          StrataReadManyInfo* info=nullptr,
-                          StrataReadLimit* limit=nullptr);
+size_t ReadFromStrataBuffer(const char** data, const char* data_end,
+                            vector<string>* items=nullptr,
+                            StrataReadManyInfo* info=nullptr,
+                            StrataReadLimit* limit=nullptr);
 
 bool WriteOneToStrataBuffer(const StrataWriteFlags& flags, const string& item,
                             char** data, const char* data_end);

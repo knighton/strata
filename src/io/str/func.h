@@ -15,10 +15,10 @@ namespace str {
 bool ReadOneFromStrataString(const string& data, size_t* index, string* item,
                              StrataReadOneInfo* info=nullptr);
 
-bool ReadFromStrataString(const string& data, size_t* index,
-                          vector<string>* items=nullptr,
-                          StrataReadManyInfo* info=nullptr,
-                          StrataReadLimit* limit=nullptr);
+size_t ReadFromStrataString(const string& data, size_t* index,
+                            vector<string>* items=nullptr,
+                            StrataReadManyInfo* info=nullptr,
+                            StrataReadLimit* limit=nullptr);
 
 bool WriteOneToStrataString(const StrataWriteFlags& flags, const string& item,
                             string* data);

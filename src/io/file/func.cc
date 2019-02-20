@@ -12,8 +12,8 @@ bool ReadOneFromStrataFile(FILE* file, string* item, StrataReadOneInfo* info) {
     return reader.ReadOne(item, info);
 }
 
-bool ReadFromStrataFile(FILE* file, vector<string>* items,
-                        StrataReadManyInfo* info, StrataReadLimit* limit) {
+size_t ReadFromStrataFile(FILE* file, vector<string>* items,
+                          StrataReadManyInfo* info, StrataReadLimit* limit) {
     StrataFileReader reader(file);
     return reader.Read(items, info, limit);
 }

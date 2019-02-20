@@ -1,5 +1,7 @@
 #include "crc32.h"
 
+#include <cassert>
+
 namespace strata {
 namespace util {
 
@@ -57,18 +59,23 @@ CRC32Manager* CRC32_MANAGER{nullptr};
 }  // namespace
 
 void InitCRC32() {
+    assert(!CRC32_MANAGER);
     CRC32_MANAGER = new CRC32Manager;
 }
 
 void DestroyCRC32() {
+    assert(CRC32_MANAGER);
     delete CRC32_MANAGER;
+    CRC32_MANAGER = nullptr;
 }
 
 uint32_t CRC32(const char* data, size_t size) {
+    assert(CRC32_MANAGER);
     return CRC32_MANAGER->Checksum(data, size);
 }
 
 uint32_t CRC32(const string& data) {
+    assert(CRC32_MANAGER);
     return CRC32_MANAGER->Checksum(data);
 }
 

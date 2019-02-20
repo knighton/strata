@@ -152,7 +152,7 @@ struct StrataReadOneInfo {
     // * Decoded payload size:   Stored in xb_.
     uint32_t xa_ : 29;
     uint32_t xb_ : 29;
-};
+} __attribute__((packed));
 
 }  // namespace base
 }  // namespace io

@@ -10,7 +10,7 @@ using strata::io::base::StrataWriteFlags;
 
 namespace strata {
 namespace io {
-namespace buf {
+namespace file {
 
 bool ReadOneFromStrataFile(FILE* file, string* item,
                            StrataReadOneInfo* info=nullptr);
@@ -25,6 +25,6 @@ bool WriteOneToStrataFile(const StrataWriteFlags& flags, const string& item,
 size_t WriteToStrataFile(const StrataWriteFlags& flags,
                            const vector<string>& items, FILE* file);
 
-}  // namespace buf
+}  // namespace file
 }  // namespace io
 }  // namespace strata

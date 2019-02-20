@@ -12,8 +12,9 @@ namespace base {
 
 // Flags bitfield used to control writing one entry.
 struct StrataWriteFlags {
-    bool snappy : 1;  // Use Snappy compression.
-    bool crc32 : 1;   // Add CRC32 checksum.
+    bool snappy : 1;      // Use Snappy compression.
+    bool crc32 : 1;       // Add CRC32 checksum.
+    uint8_t padding : 6;  // Padding.
 };
 
 // writer abstract base class.

@@ -7,17 +7,17 @@ namespace strata {
 namespace io {
 namespace str {
 
-StrataReadOneResult ReadOneFromStrataString(const string& data, size_t* index,
-                                            string* item) {
+bool ReadOneFromStrataString(const string& data, size_t* index, string* item,
+                             StrataReadOneInfo* info) {
     StrataStringReader reader(&data, index);
-    return reader.ReadOne(item);
+    return reader.ReadOne(item, info);
 }
 
-StrataReadManyResult ReadFromStrataString(
-        const string& data, size_t* index, vector<string>* items,
-        StrataReadLimit* limit, StrataReadOneResultStats* stats) {
+bool ReadFromStrataString(const string& data, size_t* index,
+                          vector<string>* items, StrataReadManyInfo* info,
+                          StrataReadLimit* limit) {
     StrataStringReader reader(&data, index);
-    return reader.Read(items, limit, stats);
+    return reader.Read(items, info, limit);
 }
 
 bool WriteOneToStrataString(const StrataWriteFlags& flags, const string& item,

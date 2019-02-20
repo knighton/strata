@@ -15,13 +15,15 @@ StrataBufferReader::StrataBufferReader(const char** data,
     data_end_ = data_end;
 }
 
-bool StrataBufferReader::ReadRaw(size_t size, char* bytes) {
+bool StrataBufferReader::ReadRaw(uint32_t size, char* bytes,
+                                 uint32_t* bytes_read) {
     assert(*data_ <= data_end_);
     if (data_end_ - *data_ < static_cast<long>(size)) {
         return false;
     }
     memcpy(bytes, *data_, size);
     *data_ += size;
+    *bytes_read += size;
     return true;
 }
 

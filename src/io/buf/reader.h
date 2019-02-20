@@ -13,7 +13,7 @@ class StrataBufferReader : public StrataReader {
     StrataBufferReader(const char** data, const char* data_end);
 
   private:
-    bool ReadRaw(size_t size, char* bytes) override;
+    bool ReadRaw(uint32_t size, char* bytes, uint32_t* bytes_read) override;
 
     bool IsAtEnd() const override;
 

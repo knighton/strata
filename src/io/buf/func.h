@@ -4,21 +4,21 @@
 #include "io/base/writer.h"
 
 using strata::io::base::StrataReadLimit;
-using strata::io::base::StrataReadManyResult;
-using strata::io::base::StrataReadOneResult;
-using strata::io::base::StrataReadOneResultStats;
+using strata::io::base::StrataReadManyInfo;
+using strata::io::base::StrataReadOneInfo;
 using strata::io::base::StrataWriteFlags;
 
 namespace strata {
 namespace io {
 namespace buf {
 
-StrataReadOneResult ReadOneFromStrataBuffer(
-    const char** data, const char* data_end, string* item);
+bool ReadOneFromStrataBuffer(const char** data, const char* data_end,
+                             string* item, StrataReadOneInfo* info=nullptr);
 
-StrataReadManyResult ReadFromStrataBuffer(
-    const char** data, const char* data_end, vector<string>* items=nullptr,
-    StrataReadLimit* limit=nullptr, StrataReadOneResultStats* stats=nullptr);
+bool ReadFromStrataBuffer(const char** data, const char* data_end,
+                          vector<string>* items=nullptr,
+                          StrataReadManyInfo* info=nullptr,
+                          StrataReadLimit* limit=nullptr);
 
 bool WriteOneToStrataBuffer(const StrataWriteFlags& flags, const string& item,
                             char** data, const char* data_end);

@@ -10,8 +10,11 @@ StrataFileReader::StrataFileReader(FILE* file) {
     file_ = file;
 }
 
-bool StrataFileReader::ReadRaw(size_t size, char* bytes) {
-    return fread(bytes, 1, size, file_) == size;
+bool StrataFileReader::ReadRaw(uint32_t size, char* bytes,
+                               uint32_t* bytes_read) {
+    uint32_t count = static_cast<uint32_t>(fread(bytes, 1, size, file_));
+    *bytes_read += count;
+    return count == size;
 }
 
 bool StrataFileReader::IsAtEnd() const {

@@ -7,17 +7,17 @@ namespace strata {
 namespace io {
 namespace buf {
 
-StrataReadOneResult ReadOneFromStrataBuffer(
-        const char** data, const char* data_end, string* item) {
+bool ReadOneFromStrataBuffer(const char** data, const char* data_end,
+                             string* item, StrataReadOneInfo* info) {
     StrataBufferReader reader(data, data_end);
-    return reader.ReadOne(item);
+    return reader.ReadOne(item, info);
 }
 
-StrataReadManyResult ReadFromStrataBuffer(
-        const char** data, const char* data_end, vector<string>* items,
-        StrataReadLimit* limit, StrataReadOneResultStats* stats) {
+bool ReadFromStrataBuffer(const char** data, const char* data_end,
+                          vector<string>* items, StrataReadManyInfo* info,
+                          StrataReadLimit* limit) {
     StrataBufferReader reader(data, data_end);
-    return reader.Read(items, limit, stats);
+    return reader.Read(items, info, limit);
 }
 
 bool WriteOneToStrataBuffer(

@@ -7,16 +7,15 @@ namespace strata {
 namespace io {
 namespace file {
 
-StrataReadOneResult ReadOneFromStrataFile(FILE* file, string* item) {
+bool ReadOneFromStrataFile(FILE* file, string* item, StrataReadOneInfo* info) {
     StrataFileReader reader(file);
-    return reader.ReadOne(item);
+    return reader.ReadOne(item, info);
 }
 
-StrataReadManyResult ReadFromStrataFile(
-        FILE* file, vector<string>* items, StrataReadLimit* limit,
-        StrataReadOneResultStats* stats) {
+bool ReadFromStrataFile(FILE* file, vector<string>* items,
+                        StrataReadManyInfo* info, StrataReadLimit* limit) {
     StrataFileReader reader(file);
-    return reader.Read(items, limit, stats);
+    return reader.Read(items, info, limit);
 }
 
 bool WriteOneToStrataFile(const StrataWriteFlags& flags, const string& item,

@@ -16,7 +16,7 @@ class StrataStringReader : public StrataReader {
   private:
     bool IsAtEnd() const override;
 
-    bool ReadRaw(size_t size, char* bytes) override;
+    bool ReadRaw(uint32_t size, char* bytes, uint32_t* bytes_read) override;
 
     const string* data_{nullptr};
     size_t* index_{nullptr};

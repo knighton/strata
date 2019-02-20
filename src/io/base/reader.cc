@@ -114,28 +114,39 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     return true;
 }
 
-bool StrataReader::Read(vector<string>* items, StrataReadManyInfo* info,
-                        StrataReadLimit* limit) {
+size_t StrataReader::Read(vector<string>* items, StrataReadManyInfo* info,
+                          StrataReadLimit* limit) {
     if (info) {
         info->Init();
     }
     string item;
     StrataReadOneInfo read_one_info;
     StrataReadOneInfo* read_one_info_ptr = info ? &read_one_info : nullptr;
+    size_t items_read = 0;
     while (true) {
+        // If we hit a limit, bail.
         if (limit && !limit->ShouldContinue(*info)) {
-            return true;
+            return items_read;
         }
+
+        // Attempt to read one entry.
         bool ok = ReadOne(&item, read_one_info_ptr);
-        if (items) {
-            items->emplace_back(item);
-        }
+
+        // Save the results regardless of success or failure, if desired.
         if (info) {
             info->Add(read_one_info);
         }
+
+        // Bail on failure.
         if (!ok) {
-            return false;
+            return items_read;
         }
+
+        // Update state on success.
+        if (items) {
+            items->emplace_back(item);
+        }
+        ++items_read;
     }
 }
 

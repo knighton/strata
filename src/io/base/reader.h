@@ -36,9 +36,9 @@ class StrataReader {
     // Configure "limit" to return after some number of entries or bytes have
     // been read, otherwise it reads until the end (nullptr means no limit).
     //
-    // Returns true iff there is more to read.
-    bool Read(vector<string>* items=nullptr, StrataReadManyInfo* info=nullptr,
-              StrataReadLimit* limit=nullptr);
+    // Returns the number of items read.
+    size_t Read(vector<string>* items=nullptr, StrataReadManyInfo* info=nullptr,
+                StrataReadLimit* limit=nullptr);
 
   protected:
     // Read some raw bytes, advancing the state.

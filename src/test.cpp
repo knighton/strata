@@ -9,6 +9,7 @@
 
 using std::make_pair;
 using std::pair;
+using namespace strata::io::base;
 using namespace strata::io::str;
 using strata::util::InitCRC32;
 using std::string;
@@ -23,6 +24,17 @@ const char* BOOL_STRS[] = {
 
 const char* Bool2Str(bool x) {
     return BOOL_STRS[static_cast<size_t>(x)];
+}
+
+void DumpVector(const vector<string>& items) {
+    printf("[");
+    if (!items.empty()) {
+        printf("%zu:'%s'", items[0].size(), items[0].c_str());
+    }
+    for (size_t i = 1; i < items.size(); ++i) {
+        printf(", %zu:'%s'", items[i].size(), items[i].c_str());
+    }
+    printf("]\n");
 }
 
 void Test(const StrataWriteFlags& flags, const vector<string>& items) {
@@ -55,6 +67,24 @@ void Test(const StrataWriteFlags& flags, const vector<string>& items) {
 
     printf("snappy = %s, crc32 = %s -> %zu bytes.\n", Bool2Str(flags.snappy),
            Bool2Str(flags.crc32), data.size());
+
+    {
+        size_t index = 0;
+        string item;
+        vector<string> read_items;
+        while (ReadOneFromStrataString(data, &index, &item)) {
+            read_items.emplace_back(item);
+        }
+        assert(items == read_items);
+    }
+
+    {
+        size_t index = 0;
+        string item;
+        vector<string> read_items;
+        assert(ReadFromStrataString(data, &index, &read_items));
+        assert(items == read_items);
+    }
 }
 
 }  // namespace

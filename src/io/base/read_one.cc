@@ -196,7 +196,7 @@ void StrataReadOneInfo::InitErrCRC32(
 void StrataReadOneInfo::InitErrSnappy(
         bool big_head, bool had_crc32, bool used_snappy,
         uint32_t encoded_payload_size) {
-    exit_ = StrataReadOneExit::ERR_CRC32;
+    exit_ = StrataReadOneExit::ERR_SNAPPY;
     big_head_ = big_head;
     had_crc32_ = had_crc32;
     used_snappy_ = used_snappy;

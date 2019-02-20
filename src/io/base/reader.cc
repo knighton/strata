@@ -17,15 +17,20 @@ StrataReader::~StrataReader() {
 bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     uint32_t bytes_read = 0;
 
+    // Check if we are starting out of data.
     if (IsAtEnd()) {
-        info->InitEnd();
+        if (info) {
+            info->InitEnd();
+        }
         return false;
     }
 
     // Parse the flags and paylod size.
     uint16_t first;
     if (!ReadRawU16(&first, &bytes_read)) {
-        info->InitTruncatedHead(bytes_read);
+        if (info) {
+            info->InitTruncatedHead(bytes_read);
+        }
         return false;
     }
     bool has_long_length = first & (1 << 15);
@@ -36,7 +41,9 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     if (has_long_length) {
         uint16_t second;
         if (!ReadRawU16(&second, &bytes_read)) {
-            info->InitTruncatedHead(bytes_read);
+            if (info) {
+                info->InitTruncatedHead(bytes_read);
+            }
             return false;
         }
         payload_size = (static_cast<uint32_t>(first) << 16) | second;
@@ -48,9 +55,11 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     uint32_t crc32;
     if (has_crc32) {
         if (!ReadRawU32(&crc32, &bytes_read)) {
-            info->InitTruncatedCRC32(
-                has_long_length, has_crc32, used_snappy, payload_size,
-                bytes_read);
+            if (info) {
+                info->InitTruncatedCRC32(
+                    has_long_length, has_crc32, used_snappy, payload_size,
+                    bytes_read);
+            }
             return false;
         }
     } else {
@@ -60,8 +69,10 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     // Now get the payload.
     string temp;
     if (!ReadRawStr(payload_size, &temp, &bytes_read)) {
-        info->InitTruncatedPayload(has_long_length, has_crc32, used_snappy,
-                                   payload_size, bytes_read);
+        if (info) {
+            info->InitTruncatedPayload(has_long_length, has_crc32, used_snappy,
+                                       payload_size, bytes_read);
+        }
         return false;
     }
 
@@ -69,8 +80,10 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     if (has_crc32) {
         uint32_t redo_crc32 = CRC32(temp.data(), temp.size());
         if (crc32 != redo_crc32) {
-            info->InitErrCRC32(has_long_length, has_crc32, used_snappy,
-                               payload_size);
+            if (info) {
+                info->InitErrCRC32(has_long_length, has_crc32, used_snappy,
+                                   payload_size);
+            }
             return false;
         }
     }
@@ -80,8 +93,10 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
     if (used_snappy) {
         string uncompressed_temp;
         if (!snappy::Uncompress(temp.data(), temp.size(), &uncompressed_temp)) {
-            info->InitErrSnappy(has_long_length, has_crc32, used_snappy,
-                                payload_size);
+            if (info) {
+                info->InitErrSnappy(has_long_length, has_crc32, used_snappy,
+                                    payload_size);
+            }
             return false;
         }
         temp.swap(uncompressed_temp);
@@ -92,8 +107,10 @@ bool StrataReader::ReadOne(string* payload, StrataReadOneInfo* info) {
 
     // Finally, set the payload.
     payload->swap(temp);
-    info->InitOK(has_long_length, has_crc32, used_snappy, payload_size,
-                 decoded_payload_size);
+    if (info) {
+        info->InitOK(has_long_length, has_crc32, used_snappy, payload_size,
+                     decoded_payload_size);
+    }
     return true;
 }
 

@@ -118,9 +118,6 @@ void TestBufferIO(const StrataWriteFlags& flags, const vector<string>& items) {
         assert(buffer.EqualsString(data_str));
     }
 
-    printf("[buffer io] snappy = %s, crc32 = %s -> %zu bytes.\n",
-           Bool2Str(flags.snappy), Bool2Str(flags.crc32), data_str.size());
-
     {
         const char* data = &data_str[0];
         const char* data_end = &data_str[data_str.size()];
@@ -257,9 +254,6 @@ void TestFileIO(const StrataWriteFlags& flags, const vector<string>& items) {
         assert(file.EqualsString(data_str));
     }
 
-    printf("[file io] snappy = %s, crc32 = %s -> %zu bytes.\n",
-           Bool2Str(flags.snappy), Bool2Str(flags.crc32), data_str.size());
-
     assert(StringToFile(data_str, filename));
 
     {
@@ -329,9 +323,6 @@ void TestStringIO(const StrataWriteFlags& flags, const vector<string>& items) {
         assert(writer.Write(flags, items));
         assert(s == data);
     }
-
-    printf("[string io] snappy = %s, crc32 = %s -> %zu bytes.\n",
-           Bool2Str(flags.snappy), Bool2Str(flags.crc32), data.size());
 
     {
         size_t index = 0;

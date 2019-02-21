@@ -10,6 +10,7 @@ COMMON = \
 	-Wno-covered-switch-default \
 	-Wno-c++98-compat \
 	-Wno-signed-enum-bitfield \
+	-Wno-unused-function \
 	-lsnappy \
 
 all:

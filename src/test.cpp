@@ -80,21 +80,21 @@ bool Buffer::EqualsString(const string& s) const {
 }
 
 void TestBufferIO(const StrataWriteFlags& flags, const vector<string>& items) {
-    string data;
+    string data_str;
     {
         Buffer buffer;
         for (auto& item : items) {
             assert(WriteOneToStrataBuffer(flags, item, &buffer.data,
                                           buffer.data_end));
         }
-        buffer.ToString(&data);
+        buffer.ToString(&data_str);
     }
 
     {
         Buffer buffer;
         assert(WriteToStrataBuffer(flags, items, &buffer.data,
                                    buffer.data_end));
-        assert(buffer.EqualsString(data));
+        assert(buffer.EqualsString(data_str));
     }
 
     {
@@ -103,14 +103,59 @@ void TestBufferIO(const StrataWriteFlags& flags, const vector<string>& items) {
         for (auto& item : items) {
             assert(writer.WriteOne(flags, item));
         }
-        assert(buffer.EqualsString(data));
+        assert(buffer.EqualsString(data_str));
     }
 
     {
         Buffer buffer;
         StrataBufferWriter writer(&buffer.data, buffer.data_end);
         assert(writer.Write(flags, items) == items.size());
-        assert(buffer.EqualsString(data));
+        assert(buffer.EqualsString(data_str));
+    }
+
+    printf("[buffer io] snappy = %s, crc32 = %s -> %zu bytes.\n",
+           Bool2Str(flags.snappy), Bool2Str(flags.crc32), data_str.size());
+
+    {
+        const char* data = &data_str[0];
+        const char* data_end = &data_str[data_str.size()];
+        string item;
+        vector<string> read_items;
+        while (ReadOneFromStrataBuffer(&data, data_end, &item)) {
+            read_items.emplace_back(item);
+        }
+        assert(items == read_items);
+    }
+
+    {
+        const char* data = &data_str[0];
+        const char* data_end = &data_str[data_str.size()];
+        string item;
+        vector<string> read_items;
+        assert(ReadFromStrataBuffer(&data, data_end, &read_items) ==
+               items.size());
+        assert(items == read_items);
+    }
+
+    {
+        const char* data = &data_str[0];
+        const char* data_end = &data_str[data_str.size()];
+        StrataBufferReader reader(&data, data_end);
+        string item;
+        vector<string> read_items;
+        while (reader.ReadOne(&item)) {
+            read_items.emplace_back(item);
+        }
+        assert(items == read_items);
+    }
+
+    {
+        const char* data = &data_str[0];
+        const char* data_end = &data_str[data_str.size()];
+        StrataBufferReader reader(&data, data_end);
+        vector<string> read_items;
+        assert(reader.Read(&read_items) == items.size());
+        assert(items == read_items);
     }
 }
 
@@ -142,8 +187,8 @@ void TestStringIO(const StrataWriteFlags& flags, const vector<string>& items) {
         assert(s == data);
     }
 
-    printf("snappy = %s, crc32 = %s -> %zu bytes.\n", Bool2Str(flags.snappy),
-           Bool2Str(flags.crc32), data.size());
+    printf("[string io] snappy = %s, crc32 = %s -> %zu bytes.\n",
+           Bool2Str(flags.snappy), Bool2Str(flags.crc32), data.size());
 
     {
         size_t index = 0;

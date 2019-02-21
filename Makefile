@@ -11,6 +11,7 @@ COMMON = \
 	-Wno-c++98-compat \
 	-Wno-signed-enum-bitfield \
 	-Wno-unused-function \
+	-Wno-missing-noreturn \
 	-lsnappy \
 
 all:

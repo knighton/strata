@@ -11,7 +11,9 @@ StrataFileWriter::StrataFileWriter(FILE* file) {
 }
 
 bool StrataFileWriter::WriteRaw(const char* bytes, size_t size) {
-    return fwrite(bytes, 1, size, file_) == size;
+    size_t size_written = fwrite(bytes, 1, size, file_);
+    fflush(file_);
+    return size_written == size;
 }
 
 }  // namespace file
